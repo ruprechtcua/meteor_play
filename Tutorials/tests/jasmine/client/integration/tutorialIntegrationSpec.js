@@ -30,7 +30,7 @@ describe("Tutorial", function () {
             expect(err).toBeUndefined();
  
             // create a new tutorial
-            var tut = new Tutorial(1, "Tutorial 1", 10);
+            var tut = new Tutorial(null, "Tutorial 1", 10);
  
             // save the tutorial and use callback function to check for existence
             var id = tut.save(function(error, result) {

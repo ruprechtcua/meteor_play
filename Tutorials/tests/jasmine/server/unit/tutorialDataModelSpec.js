@@ -58,4 +58,17 @@ describe("Tutorial", function() {
         }).toThrow();
     });
 
+    it("should allow students to register for the tutorial", function() {
+    var model = new Tutorial("1", "Name", 10, 5);
+    var studentId = "2";
+ 
+    spyOn(TutorialRegistrations, "insert");
+ 
+    model.registerStudent(studentId);
+ 
+    expect(model.currentCapacity).toBe(2);
+    expect(TutorialRegistrations.insert).toHaveBeenCalled();
+    expect(TutorialRegistrations.insert.calls.mostRecent().args[0]).toEqual({ tutorialId : '1', studentId : '2' });
+});
+
 });

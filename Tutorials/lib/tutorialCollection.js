@@ -9,7 +9,7 @@ Tutorials.allow({
         // the user must be logged in, and the document must be owned by the user
         return (userId && doc.owner === Meteor.userId() && Roles.userIsInRole(userId, "admin"));
     },
-    remove: function (userId, doc) {
+    remove: function(userId, doc) {
         // can only remove your own documents
         return doc.owner === userId;
     }
@@ -21,6 +21,7 @@ Tutorial = function(id, name, capacity, owner) {
     this._name = name;
     this._capacity = capacity;
     this._owner = owner;
+    this._currentCapacity = 0;
 };
 
 Tutorial.prototype = {
@@ -43,6 +44,12 @@ Tutorial.prototype = {
     },
     set capacity(value) {
         this._capacity = value;
+    },
+    get currentCapacity() {
+        return this._currentCapacity;
+    },
+    set currentCapacity(value) {
+        this._currentCapacity = value;
     },
     save: function(callback) {
         if (!this.name) {
@@ -67,7 +74,21 @@ Tutorial.prototype = {
             }
         });
 
-    }
+    },
+    registerStudent: function(studentId) {
+            if (this.currentCapacity >= this.capacity) {
+                throw "Capacity of the tutorial has been reached!";
+            }
+            var that = this;
+            TutorialRegistrations.insert({
+                tutorialId: this._id,
+                studentId: studentId
+            }, function(err, id) {
+                if (!err) {
+                    that._currentCapacity += 1;
+                }
+            });
+        }
 };
 
 if (Meteor.isServer) {
@@ -83,5 +104,6 @@ if (Meteor.isServer) {
             }
             Tutorials.remove(id);
         }
+
     });
 }
